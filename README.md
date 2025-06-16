@@ -1,0 +1,2 @@
+# motivation_diagnosis_tool
+仕事のやる気が出ない時の対処法12選
