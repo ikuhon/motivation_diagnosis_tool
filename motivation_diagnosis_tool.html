@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>やる気診断＆プランニングシート</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Sans', 'ヒラギノ角ゴシック', 'Yu Gothic', 'メイリオ', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section h2:after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            margin: 10px auto;
+            border-radius: 2px;
+        }
+
+        .diagnosis-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .type-group {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .type-group h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .checkbox-item:hover {
+            background-color: #f1f3f4;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: #3498db;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .diagnosis-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .diagnosis-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .result {
+            background: linear-gradient(135deg, #a8e6cf, #7fcdcd);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 25px;
+            color: #2c3e50;
+            display: none;
+        }
+
+        .result h4 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .result p {
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .planning-sheet {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        /* 新しいアクションアイテム */
+        .action-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            gap: 20px;
+            padding-top: 10px;
+        }
+
+        .todo-input {
+            flex: 1;
+            border: 3px solid #3498db;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            background: #f8f9fa;
+            min-height: 50px;
+            width: 70%;
+        }
+
+        .todo-input:focus {
+            outline: none;
+            border-color: #2980b9;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
+        }
+
+        .todo-input::placeholder {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .todo-checkbox {
+            width: 25px;
+            height: 25px;
+            accent-color: #27ae60;
+            cursor: pointer;
+            border: 2px solid #27ae60;
+            margin-top: 12px;
+            flex-shrink: 0;
+        }
+
+        .todo-checkbox:focus {
+            outline: 2px solid #27ae60;
+            outline-offset: 2px;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .note p {
+            margin: 0;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .diagnosis-container,
+            .planning-sheet {
+                padding: 20px;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 やる気診断＆プランニング</h1>
+            <p>あなたのやる気低下タイプを診断して、専用の回復プランを作成しましょう</p>
+        </div>
+
+        <div class="content">
+            <!-- 診断セクション -->
+            <section class="section">
+                <h2>🔍 【診断】あなたのやる気低下タイプをチェック！</h2>
+                
+                <div class="diagnosis-container">
+                    <div class="type-group">
+                        <h3>💤 タイプA：身体疲労型</h3>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="a1" data-type="A">
+                            <label for="a1">慢性的な寝不足が続いている</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="a2" data-type="A">
+                            <label for="a2">残業が月30時間以上ある</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="a3" data-type="A">
+                            <label for="a3">休日も疲れが取れない</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="a4" data-type="A">
+                            <label for="a4">肩こりや頭痛が頻繁にある</label>
+                        </div>
+                    </div>
+
+                    <div class="type-group">
+                        <h3>👥 タイプB：人間関係ストレス型</h3>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="b1" data-type="B">
+                            <label for="b1">上司や同僚との関係に悩んでいる</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="b2" data-type="B">
+                            <label for="b2">職場で孤立感を感じる</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="b3" data-type="B">
+                            <label for="b3">会議や打ち合わせが憂鬱</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="b4" data-type="B">
+                            <label for="b4">人と話すのが面倒に感じる</label>
+                        </div>
+                    </div>
+
+                    <div class="type-group">
+                        <h3>📈 タイプC：評価不満型</h3>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="c1" data-type="C">
+                            <label for="c1">頑張りが正当に評価されない</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="c2" data-type="C">
+                            <label for="c2">給与に不満がある</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="c3" data-type="C">
+                            <label for="c3">昇進・昇格の見込みが薄い</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="c4" data-type="C">
+                            <label for="c4">成果を上げても認められない</label>
+                        </div>
+                    </div>
+
+                    <div class="type-group">
+                        <h3>🎯 タイプD：仕事内容ミスマッチ型</h3>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d1" data-type="D">
+                            <label for="d1">仕事に興味や関心が持てない</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d2" data-type="D">
+                            <label for="d2">同じ作業の繰り返しに飽きている</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d3" data-type="D">
+                            <label for="d3">自分の強みを活かせていない</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d4" data-type="D">
+                            <label for="d4">やりがいを感じられない</label>
+                        </div>
+                    </div>
+
+                    <button class="diagnosis-btn" onclick="diagnose()">診断結果を見る</button>
+
+                    <div id="result" class="result">
+                        <h4 id="result-type"></h4>
+                        <p id="result-description"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- プランニングシートセクション -->
+            <section class="section">
+                <h2>📝 【無料テンプレート】やる気回復プランニングシート</h2>
+                
+                <div class="planning-sheet">
+                    <div class="note">
+                        <p>💡 このシートを使って、あなただけのやる気回復プランを作成しましょう。定期的に見直すことで、モチベーション維持に役立ちます。</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="diagnosis-result">🔍 やる気低下のタイプ</label>
+                        <input type="text" id="diagnosis-result" placeholder="上の診断結果を入力してください">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="main-causes">🎯 主な原因（上位3つ）</label>
+                        <textarea id="main-causes" placeholder="1. &#10;2. &#10;3. "></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ideal-state">✨ 1ヶ月後の理想状態</label>
+                        <textarea id="ideal-state" placeholder="どんな状態になっていたいですか？"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="measurement">📊 達成度測定方法</label>
+                        <input type="text" id="measurement" placeholder="どうやって達成度を測りますか？">
+                    </div>
+
+                    <div class="form-group">
+                        <label>📅 今週実践すること</label>
+                        <div class="action-section">
+                            <div style="margin-bottom: 15px;">
+                                <input type="text" placeholder="今週のアクション1を入力してください" style="width: 80%; padding: 15px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px; margin-right: 15px;">
+                                <input type="checkbox" style="width: 20px; height: 20px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <input type="text" placeholder="今週のアクション2を入力してください" style="width: 80%; padding: 15px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px; margin-right: 15px;">
+                                <input type="checkbox" style="width: 20px; height: 20px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <input type="text" placeholder="今週のアクション3を入力してください" style="width: 80%; padding: 15px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px; margin-right: 15px;">
+                                <input type="checkbox" style="width: 20px; height: 20px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>📆 今月取り組むこと</label>
+                        <div class="action-section">
+                            <div style="margin-bottom: 15px;">
+                                <input type="text" placeholder="今月のアクション1を入力してください" style="width: 80%; padding: 15px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px; margin-right: 15px;">
+                                <input type="checkbox" style="width: 20px; height: 20px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <input type="text" placeholder="今月のアクション2を入力してください" style="width: 80%; padding: 15px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px; margin-right: 15px;">
+                                <input type="checkbox" style="width: 20px; height: 20px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="support-person">👥 相談相手</label>
+                        <input type="text" id="support-person" placeholder="信頼できる相談相手の名前">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="report-date">📅 進捗報告日</label>
+                        <input type="date" id="report-date">
+                    </div>
+
+                    <button class="save-btn" onclick="saveSheet()">プランを保存する</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        function diagnose() {
+            const types = { A: 0, B: 0, C: 0, D: 0 };
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            
+            checkboxes.forEach(checkbox => {
+                const type = checkbox.getAttribute('data-type');
+                if (type) types[type]++;
+            });
+
+            let maxType = 'A';
+            let maxCount = 0;
+            
+            for (const [type, count] of Object.entries(types)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    maxType = type;
+                }
+            }
+
+            const typeDescriptions = {
+                A: {
+                    name: '💤 身体疲労型',
+                    description: 'あなたは心身の疲労が主な原因です。まずは十分な休息と睡眠を心がけ、無理をしない働き方を意識しましょう。'
+                },
+                B: {
+                    name: '👥 人間関係ストレス型',
+                    description: 'あなたは職場の人間関係が主なストレス源です。コミュニケーション改善と境界線設定に取り組んでみましょう。'
+                },
+                C: {
+                    name: '📈 評価不満型',
+                    description: 'あなたは評価や報酬への不満が主な原因です。成果の可視化と上司との対話を重視してみましょう。'
+                },
+                D: {
+                    name: '🎯 仕事内容ミスマッチ型',
+                    description: 'あなたは仕事内容への不満が主な原因です。思考のスイッチを切り替えて、仕事に新たな意味を見出してみましょう。'
+                }
+            };
+
+            const result = document.getElementById('result');
+            const resultType = document.getElementById('result-type');
+            const resultDescription = document.getElementById('result-description');
+            const diagnosisResultInput = document.getElementById('diagnosis-result');
+
+            resultType.textContent = `あなたのタイプ: ${typeDescriptions[maxType].name}`;
+            resultDescription.textContent = typeDescriptions[maxType].description;
+            diagnosisResultInput.value = typeDescriptions[maxType].name;
+
+            result.style.display = 'block';
+            result.classList.add('fade-in');
+        }
+
+        function saveSheet() {
+            const todoInputs = document.querySelectorAll('.todo-input');
+            const weekActions = [];
+            const monthActions = [];
+            
+            // 今週のアクション（最初の3つ）
+            for(let i = 0; i < 3; i++) {
+                if(todoInputs[i] && todoInputs[i].value.trim()) {
+                    weekActions.push(todoInputs[i].value.trim());
+                }
+            }
+            
+            // 今月のアクション（次の2つ）
+            for(let i = 3; i < 5; i++) {
+                if(todoInputs[i] && todoInputs[i].value.trim()) {
+                    monthActions.push(todoInputs[i].value.trim());
+                }
+            }
+
+            const formData = {
+                diagnosisResult: document.getElementById('diagnosis-result').value,
+                mainCauses: document.getElementById('main-causes').value,
+                idealState: document.getElementById('ideal-state').value,
+                measurement: document.getElementById('measurement').value,
+                supportPerson: document.getElementById('support-person').value,
+                reportDate: document.getElementById('report-date').value,
+                weekActions: weekActions,
+                monthActions: monthActions
+            };
+
+            const content = `やる気回復プランニングシート
+            
+診断タイプ: ${formData.diagnosisResult}
+主な原因: ${formData.mainCauses}
+1ヶ月後の理想状態: ${formData.idealState}
+達成度測定方法: ${formData.measurement}
+
+今週実践すること:
+${formData.weekActions.map((action, index) => `${index + 1}. ${action}`).join('\n')}
+
+今月取り組むこと:
+${formData.monthActions.map((action, index) => `${index + 1}. ${action}`).join('\n')}
+
+相談相手: ${formData.supportPerson}
+進捗報告日: ${formData.reportDate}
+
+作成日: ${new Date().toLocaleDateString('ja-JP')}`;
+
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'やる気回復プラン.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert('プランが保存されました！定期的に見直して、やる気回復に役立ててください。');
+        }
+
+        // チェックボックスにアニメーション効果を追加
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    this.parentElement.style.backgroundColor = '#e8f5e8';
+                } else {
+                    this.parentElement.style.backgroundColor = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
